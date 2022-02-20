@@ -1,5 +1,8 @@
+// ignore_for_file: unused_import, prefer_const_constructors_in_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import './config.dart';
+import './model/data.dart';
 
 void main() {
   runApp(MaterialApp(debugShowCheckedModeBanner: false, home: Table()));
@@ -13,22 +16,22 @@ class Table extends StatefulWidget {
 }
 
 class _TableState extends State<Table> {
-  List data = []; // empty list
+  List data = [];
+
+  
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    var db = Mysql(); // sql config file
-
+    var db = Mysql();
     db.getconnection().then((conn) {
-      String fetch = 'Select * from tempdata'; // query 
+      String fetch = 'Select * from tempdata';
       conn.query(fetch).then((user) {
-        // data.add()
-        for (var row in user) {
-          data.add(row); // adding query in empty list
-          // print(row);
-        }
-        // print working but orignal data not affecting 
+        setState(() {
+          for (var row in user) {
+            data.add(row);
+          }
+        });
       });
     });
   }
@@ -39,9 +42,19 @@ class _TableState extends State<Table> {
       appBar: null,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(children: [
-            Text(data.toString()),
-          ]),
+          child: Column(
+            children:data.map((info){
+              return ListView(
+                children: [
+                  ListTile(
+                    title: Text("${info[0]} - ${info[1]} ${info[2]}"),
+                    subtitle: Text("${info[3]}"),
+                  )
+                ],
+                
+              );
+            }).toList()
+          ),
         ),
       ),
     );
