@@ -18,9 +18,9 @@ class Table extends StatefulWidget {
 }
 
 class _TableState extends State<Table> {
-  List<RowData> data1 = [];
-  List<dynamic> temp = [];
-  Future<List<RowData>> getdata() async {
+  List temp = [];
+  Future getdata() async {
+    List<RowData> data1 = [];
     var db = Mysql();
     await db.getconnection().then((conn) {
       String fetch = 'Select * from tempdata';
@@ -30,8 +30,9 @@ class _TableState extends State<Table> {
         }
       });
     });
-    List<dynamic> t = jsonDecode(temp);
-    data1 = t.map((t) =>RowData.fromJson(t)).toList();
+    List<dynamic> t = jsonDecode(temp.toString());
+    data1 = t.map((t) => RowData.fromJson(t)).toList();
+    print("");
     return data1;
   }
 
@@ -47,16 +48,18 @@ class _TableState extends State<Table> {
       body: SafeArea(
           child: FutureBuilder(
         future: getdata(),
-        builder: (context, comingdata) {
+        builder: (context, AsyncSnapshot comingdata) {
           if (comingdata == null) {
             return CircularProgressIndicator();
           } else {
             return ListView.builder(
-              itemCount: comingdata.data.toString().length,
+              itemCount: 5,
               itemBuilder: (context, int index) {
                 return ListTile(
-                  title: Text(comingdata.data[index].id.toString()),
-                );
+                    title: Text(comingdata.data[index].fname.toString())
+                    //Text(comingdata.data[index].fname.toString())
+
+                    );
               },
             );
           }
